@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThanhHai Menu - Interactive Check UI</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: #0b0d10;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* KHUNG MENU CHÍNH */
+        .menu-container {
+            width: 960px;
+            height: 540px;
+            background-color: #12141c;
+            border-radius: 24px;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #1f2330;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        }
+
+        /* --- SIDEBAR TRÁI --- */
+        .sidebar {
+            width: 240px;
+            background-color: #12141c;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #1f2330;
+        }
+
+        .logo-box {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-left: 5px;
+        }
+
+        .version-badge {
+            border: 2px solid #38761d;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 24px;
+            padding: 5px 12px;
+            border-radius: 12px;
+            margin-right: 10px;
+        }
+
+        .brand-name {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-main {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            line-height: 1;
+        }
+
+        .brand-sub {
+            font-size: 10px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .sidebar-title {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: bold;
+            margin: 12px 0 6px 5px;
+            text-transform: uppercase;
+        }
+
+        .menu-btn {
+            background-color: #1e2230;
+            color: #94a3b8;
+            border: none;
+            padding: 14px 16px;
+            border-radius: 14px;
+            font-weight: bold;
+            font-size: 13px;
+            text-align: left;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        .menu-btn.active {
+            background-color: #0256cc;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(2, 86, 204, 0.3);
+        }
+
+        .sidebar-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        /* --- VÙNG NỘI DUNG PHẢI --- */
+        .main-content {
+            flex: 1;
+            padding: 25px 30px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .header-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin: 0 0 20px 0;
+            text-transform: uppercase;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            width: 36px;
+            height: 36px;
+            background-color: #ea4335;
+            border-radius: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* GROUP BOX PHÂN KHU CHỨC NĂNG */
+        .group-box {
+            border-radius: 20px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            position: relative;
+            background-color: #12141c;
+        }
+
+        .group-title {
+            position: absolute;
+            top: -10px;
+            left: 25px;
+            background-color: #12141c;
+            padding: 0 10px;
+            font-size: 13px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .group-green { border: 2px solid #2e7d32; }
+        .group-green .group-title { color: #4caf50; }
+
+        .group-orange { border: 2px solid #d84315; }
+        .group-orange .group-title { color: #ff5722; }
+
+        .group-blue { border: 2px solid #0256cc; }
+        .group-blue .group-title { color: #2196f3; }
+
+        .flex-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 5px;
+        }
+
+        /* CHECKBOX CHỨC NĂNG */
+        .imgui-checkbox {
+            display: flex;
+            align-items: center;
+            background-color: #1e2230;
+            padding: 10px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            flex: 1;
+        }
+        .imgui-checkbox input {
+            margin-right: 10px;
+            width: 16px;
+            height: 16px;
+            accent-color: #0256cc;
+        }
+        .imgui-checkbox .sub-label {
+            color: #64748b;
+            font-size: 11px;
+            font-weight: normal;
+        }
+
+        /* DROPDOWN SELECT */
+        .imgui-select {
+            background-color: #1e2230;
+            color: #ffffff;
+            border: 1px solid #2c3147;
+            padding: 12px 16px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: bold;
+            outline: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* TOGGLE SWITCH TRÒN */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+        .switch input { display: none; }
+        .slider-round {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #1e2230;
+            border-radius: 34px;
+            transition: .3s;
+        }
+        .slider-round:before {
+            position: absolute;
+            content: "";
+            height: 18px; width: 18px;
+            left: 4px; bottom: 4px;
+            background-color: white;
+            border-radius: 50%;
+            transition: .3s;
+        }
+        input:checked + .slider-round { background-color: #0256cc; }
+        input:checked + .slider-round:before { transform: translateX(24px); }
+
+        .cam-text {
+            font-size: 13px;
+            font-weight: bold;
+            color: #94a3b8;
+        }
+        .cam-value {
+            font-size: 24px;
+            font-weight: 900;
+            color: #ffffff;
+            min-width: 50px;
+        }
+
+        .btn-lock {
+            background-color: #1e2230;
+            color: #94a3b8;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-lock.locked {
+            background-color: #ea4335;
+            color: white;
+        }
+
+        /* HIỆU ỨNG TRƯỢT RANGE */
+        .range-slider {
+            flex: 1;
+            accent-color: #0256cc;
+        }
+
+        /* HIỂN THỊ CÁC TAB */
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        .note-text {
+            color: #ffeb3b;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="menu-container">
+    
+    <!-- SIDEBAR TRÁI -->
+    <div class="sidebar">
+        <div class="logo-box">
+            <div class="version-badge">2.0</div>
+            <div class="brand-name">
+                <span class="brand-main">THANHHAI</span>
+                <span class="brand-sub">Powered by ThanhHai</span>
+            </div>
+        </div>
+
+        <span class="sidebar-title">Chức năng chính</span>
+        <button class="menu-btn active" onclick="switchTab(event, 'tab-chinh')">Chức năng chính</button>
+        
+        <span class="sidebar-title">Mics Pro Play</span>
+        <button class="menu-btn" onclick="switchTab(event, 'tab-skill')">Tự động Skill</button>
+        <button class="menu-btn" onclick="switchTab(event, 'tab-aim')">Aimbot Skill</button>
+        
+        <span class="sidebar-title">Custom Game</span>
+        <button class="menu-btn" onclick="switchTab(event, 'tab-mod')">Mod & Hồ Sơ</button>
+    </div>
+
+    <!-- KHU VỰC CHỨC NĂNG PHẢI -->
+    <div class="main-content">
+        <div class="header-title" id="panel-title">Chức năng chính</div>
+        <div class="close-btn" onclick="alert('Đóng menu giả lập!')">✕</div>
+
+        <!-- TAB 1: CHỨC NĂNG CHÍNH -->
+        <div id="tab-chinh" class="tab-panel active">
+            <!-- TRUNG TÂM -->
+            <div class="group-box group-green">
+                <div class="group-title">Trung tâm</div>
+                <div class="flex-row">
+                    <label class="imgui-checkbox">
+                        <input type="checkbox" id="cb-maphack" checked>
+                        <div>MAP HACK<div class="sub-label">Hiển thị tầm nhìn toàn bản đồ</div></div>
+                    </label>
+                    <label class="imgui-checkbox">
+                        <input type="checkbox" id="cb-timeulti">
+                        <div>TIME HỒI ULTI<div class="sub-label">Hiện thời gian đếm ngược</div></div>
+                    </label>
+                </div>
+                <div class="flex-row" style="margin-top: 15px;">
+                    <select class="imgui-select" id="select-kin">
+                        <option value="0">Tên Mặc Định | Tắt</option>
+                        <option value="1">Chơi Kín Không Lộ Liễu (An Toàn)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- CAMERA -->
+            <div class="group-box group-blue">
+                <div class="group-title">Điều chỉnh Camera</div>
+                <div class="flex-row">
+                    <label class="switch">
+                        <input type="checkbox" id="cam-toggle" onchange="toggleCamSlider()">
+                        <span class="slider-round"></span>
+                    </label>
+                    <span class="cam-text">CAMERA THẲNG</span>
+                    
+                    <input type="range" class="range-slider" id="cam-range" min="0.3" max="2.5" step="0.1" value="1.0" disabled oninput="updateCamValue(this.value)">
+                    <span class="cam-value" id="cam-val-txt">1.0x</span>
+                    
+                    <button class="btn-lock" id="btn-lock-cam" onclick="toggleLockCam()">Khoá Cam</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: TỰ ĐỘNG SKILL (AUTO SMITE) -->
+        <div id="tab-skill" class="tab-panel">
+            <div class="group-box group-blue">
+                <div class="group-title">Trợ Lý Đi Rừng (Auto Trừng Trị)</div>
+                <div style="margin-bottom: 15px;">
+                    <label class="imgui-checkbox" style="background: #252a3d;">
+                        <input type="checkbox" id="master-smite" onchange="toggleSmiteSub(this.checked)">
+                        <div>KÍCH HOẠT AUTO TRỪNG TRỊ (Tự tính toán sát thương kết liễu)</div>
+                    </label>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <label class="imgui-checkbox"><input type="checkbox" class="smite-sub" checked disabled> Trừng Trị Bùa Xanh</label>
+                    <label class="imgui-checkbox"><input type="checkbox" class="smite-sub" checked disabled> Trừng Trị Bùa Đỏ</label>
+                    <label class="imgui-checkbox"><input type="checkbox" class="smite-sub" checked disabled> Trừng Trị Rồng Kraydus</label>
+                    <label class="imgui-checkbox"><input type="checkbox" class="smite-sub" checked disabled> Trừng Trị Tà Thần Caesar</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: AIMBOT SKILL -->
+        <div id="tab-aim" class="tab-panel">
+            <div class="group-box group-green">
+                <div class="group-title">Cấu hình Aim Tướng nâng cao</div>
+                <div style="margin-bottom: 15px;">
+                    <label class="imgui-checkbox" style="background: #252a3d;">
+                        <input type="checkbox" id="aim-toggle" onchange="toggleAimSub(this.checked)">
+                        <div>BẬT AIMBOT TẤT CẢ TƯỚNG (Tự định vị kỹ năng)</div>
+                    </label>
+                </div>
+                <div class="flex-row">
+                    <div style="flex: 1;">
+                        <div class="sub-label" style="margin-bottom: 5px;">Chế độ khóa mục tiêu:</div>
+                        <select class="imgui-select" id="aim-target" disabled>
+                            <option>Ưu tiên kẻ địch thấp máu nhất</option>
+                            <option>Ưu tiên kẻ địch gần nhất</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <div class="sub-label" style="margin-bottom: 5px;">Bán kính quét (Tầm ngắm):</div>
+                        <div class="flex-row" style="background: #1e2230; padding: 8px; border-radius:14px;">
+                            <input type="range" class="range-slider" id="aim-range-slider" min="5" max="25" value="12" disabled oninput="document.getElementById('aim-range-txt').innerText = this.value + ' mét'">
+                            <span id="aim-range-txt" style="font-weight: bold; width: 60px; text-align: right;">12 mét</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: MOD & HỒ SƠ -->
+        <div id="tab-mod" class="tab-panel">
+            <div class="group-box group-orange">
+                <div class="group-title">Mod Skin & Giao Diện</div>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <label class="imgui-checkbox"><input type="checkbox"> Unlock Full Skin Tướng (Hiển thị Client)</label>
+                    <label class="imgui-checkbox"><input type="checkbox"> Mod Nút Bấm & Hiệu Ứng Nút Kỹ Năng</label>
+                    <label class="imgui-checkbox"><input type="checkbox"> Mod Thông báo hạ gục đặc biệt (Kill Banner)</label>
+                </div>
+            </div>
+
+            <div class="group-box group-blue">
+                <div class="group-title">Hồ Sơ Cá Nhân & Xem lịch sử</div>
+                <div class="flex-row">
+                    <label class="imgui-checkbox" style="max-width: 250px;"><input type="checkbox"> Mở khóa xem Lịch Sử ĐấuẨn</label>
+                    <div style="flex: 1;">
+                        <select class="imgui-select">
+                            <option>Bật Mod Rank Giao Diện: Cao Thủ</option>
+                            <option>Bật Mod Rank Giao Diện: Thách Đấu</option>
+                            <option>Bật Mod Rank Giao Diện: Chiến Tướng 100+ Sao</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="note-text">* Chức năng Mod hồ sơ/Rank giúp thay đổi giao diện chụp ảnh cục bộ để kiểm tra hiển thị.</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Hàm chuyển đổi các Tab nội dung
+    function switchTab(event, tabId) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+        document.getElementById('panel-title').innerText = event.currentTarget.innerText;
+    }
+
+    // Bật/Tắt thanh kéo chỉnh Camera
+    function toggleCamSlider() {
+        let toggle = document.getElementById('cam-toggle');
+        let slider = document.getElementById('cam-range');
+        slider.disabled = !toggle.checked;
+        if(!toggle.checked) {
+            slider.value = 1.0;
+            updateCamValue(1.0);
+        }
+    }
+    function updateCamValue(val) {
+        document.getElementById('cam-val-txt').innerText = val + "x";
+    }
+
+    // Bật/Tắt Khóa Camera
+    function toggleLockCam() {
+        let btn = document.getElementById('btn-lock-cam');
+        btn.classList.toggle('locked');
+        if(btn.classList.contains('locked')) {
+            btn.innerText = "Đã Khóa";
+        } else {
+            btn.innerText = "Khóa Cam";
+        }
+    }
+
+    // Bật/Tắt các nhánh con của Auto Trừng trị
+    function toggleSmiteSub(isActive) {
+        document.querySelectorAll('.smite-sub').forEach(cb => {
+            cb.disabled = !isActive;
+        });
+    }
+
+    // Bật/Tắt nhánh con của Aimbot
+    function toggleAimSub(isActive) {
+        document.getElementById('aim-target').disabled = !isActive;
+        document.getElementById('aim-range-slider').disabled = !isActive;
+    }
+</script>
+
+</body>
+</html>
